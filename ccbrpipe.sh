@@ -7,7 +7,7 @@ module load snakemake/5.1.3
 module load graphviz
 
 export pipehome=$(dirname $0)
-export PYTHONPATH=$PYTHONPATH:$pipehome/local/lib/
+# export PYTHONPATH=$PYTHONPATH:$pipehome/local/lib/
 
 cd  $pipehome;
 export pipehome=`pwd`;

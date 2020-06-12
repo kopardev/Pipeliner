@@ -10,10 +10,16 @@ def build_in_progress( msg="" ) :
 def about():
     info="""
     CCBR Pipeliner
-    Version 3.0
-    December, 2017.
+    Version 4.0.2
+    April 29, 2020
     """
-    showinfo("CCBR Pipeliner\nVersion 3.0",info)
+    showinfo("CCBR Pipeliner\nVersion 4.0.2",info)
+
+def getHelp():
+	info="""
+	Please visit https://github.com/CCBR/Pipeliner/wiki for help.
+	"""
+	showinfo("HELP",info)
 
 def add_menubar( root ):
 	menubar = Menu(root)
@@ -29,14 +35,14 @@ def add_menubar( root ):
 
 	#view menu
 	viewmenu = Menu(menubar, tearoff=0)
-	viewmenu.add_command( label="Progress", command=root.progress )
+	# viewmenu.add_command( label="Progress", command=root.progress )
 	viewmenu.add_command( label="Workflow", command=root.workflow )
 
 	menubar.add_cascade( label="View", menu=viewmenu )
 
 	#help menu
 	helpmenu = Menu(menubar, tearoff=0)
-	helpmenu.add_command( label="Help", command=build_in_progress )
+	helpmenu.add_command( label="Help", command=getHelp )
 	helpmenu.add_separator()
 	helpmenu.add_command( label="About", command=about )
 
