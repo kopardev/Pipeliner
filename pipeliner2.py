@@ -55,6 +55,7 @@ print( "PWD:", PWD )
 
 from gui.frame import PipelineFrame
 from gui.rnaseq import RNASeqFrame
+from gui.atacseq import ATACSeqFrame
 from gui.genomeseq import GenomeSeqFrame
 from gui.mirseq import MiRSeqFrame
 from gui.epigenomeseq import ChIPSeqFrame
@@ -136,7 +137,7 @@ class PipelinerGUI(Tk):
         om["menu"].config() #bg = widgetBgColor,fg=widgetFgColor)
         om.grid(row=1,column=4,sticky=W,padx=10,pady=10)
         
-        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'ChIPseq', 'scrnaseq']
+        pfamilys = ['exomeseq', 'rnaseq', 'genomeseq', 'mirseq', 'ChIPseq', 'ATACseq', 'scrnaseq']
         self.pfamily = pfamily = StringVar()
         pfamily.set('Select a pipeline')
         om = OptionMenu(pipeline_panel, pfamily, *pfamilys, command=self.set_pipeline)
@@ -256,9 +257,19 @@ class PipelinerGUI(Tk):
         set2=['Select the genome','hg19','mm10','mm9','hg38']
         set3=['Select the genome','GRCh38','mm10']
         set4=['Select the genome','hg19','mm10','hg38']
+        set5=['Select the genome', 'hg38','mm10']
 
         if self.pipelineframe :
             self.notebook.forget( self.pipelineframe )
+
+        if self.pfamily.get() == 'ATACseq' :
+            print( 'ATACseq' )
+            if not annotation in set5:
+            	outtxt_short="%s is not supported in this pipeline!"%(annotation)
+            	showinfo("WARNING",outtxt_short)
+            self.pipelineframe = ATACSeqFrame( self.notebook, 
+                                               'ATACseq', #self.pfamily.get(), 
+                                               self.annotation, global_info=self )
 
         if self.pfamily.get() == 'exomeseq' :
             print( 'exomeseq' )
@@ -333,6 +344,6 @@ class PipelinerGUI(Tk):
 
 if __name__ == "__main__":
     gui = PipelinerGUI()
-    gui.title('CCBR Pipeliner: 4.0')
+    gui.title('CCBR Pipeliner: 4.0.2')
     gui.mainloop()
 
