@@ -17,7 +17,10 @@ def about():
 
 def getHelp():
 	info="""
-	Please visit https://github.com/CCBR/Pipeliner/wiki for help.
+	Tutorials and Documentation:
+	https://github.com/CCBR/Pipeliner/wiki
+	Email:
+	CCBR_Pipeliner@mail.nih.gov
 	"""
 	showinfo("HELP",info)
 
@@ -42,7 +45,7 @@ def add_menubar( root ):
 
 	#help menu
 	helpmenu = Menu(menubar, tearoff=0)
-	helpmenu.add_command( label="Help", command=getHelp )
+	helpmenu.add_command( label="GetHelp", command=getHelp )
 	helpmenu.add_separator()
 	helpmenu.add_command( label="About", command=about )
 
