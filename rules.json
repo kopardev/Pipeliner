@@ -177,6 +177,7 @@
         "rnaseqfusion": "all-rnafusion.rl",
 #        "rnaseqvar-germline": "all-rnaseqvar-germline.rl",
 #        "rnaseqvar-somatic": "all-rnaseqvar-somatic.rl",
+    "atacseq": "atacseq.snakefile",
     "rnaseq": "rnaseq.snakefile",
     "initialqcrnaseq": "initialqcrnaseq.snakefile",
     "cellranger": "scrnaseq.snakefile",
