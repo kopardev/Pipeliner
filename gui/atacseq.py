@@ -32,6 +32,13 @@ from gui.utils import USER_HOME, PIPELINER_HOME, PIPELINER_CONF
 
 
 class ATACSeqFrame( PipelineFrame ) :
+    def coming_soon(self):
+        info="""
+This feature is coming soon.... Stay tuned!
+        """
+        showinfo("HELP",info)
+
+
     def __init__(self, pipepanel, pipeline_name, *args, **kwargs) :
         PipelineFrame.__init__(self, pipepanel, pipeline_name, *args, **kwargs)
         self.info = None
@@ -63,7 +70,8 @@ class ATACSeqFrame( PipelineFrame ) :
         self.groups_button.grid(row=5, column=5, padx=10, pady=5)
 
         self.om_coming_soon = LabelFrame(eframe, text="Coming Soon!")
-        self.coming_soon_text = Button(self.om_coming_soon, text="Coming Soon!!!!!")
+        self.coming_soon_button = Button(self.om_coming_soon, text="Coming Soon!!!!!", command=self.coming_soon)
+        self.coming_soon_button.grid(row=5, column=5, padx=10, pady=5)
 
         #####################
         #Sample Threshold 
