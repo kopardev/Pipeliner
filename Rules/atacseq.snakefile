@@ -4,6 +4,7 @@ import os
 
 configfile: "run.json"
 WORKDIR = config['project']['workpath']
+os.system("touch "+join(WORKDIR,"dummy"))
 SINGULARITY_SIF = config['bin'][pfamily]['SINGULARITY_SIF']
 # SAMPLES=["test_input"]
 GENOME = config['references'][pfamily]['GENOME']
@@ -910,8 +911,7 @@ rule atac_multiqc:
         join(WORKDIR,"qc","jaccard","allmethods.sample.jaccard.pca.html"),
         join(WORKDIR,"qc","jaccard","allmethods.group.jaccard.pca.html"),
         join(WORKDIR,"qc","jaccard","allmethods.sample_group.jaccard.pca.html"),
-        expand(join(WORKDIR,"qc","frip","{grp}.frip"),grp=GROUPS),
-        join(WORKDIR,"qc","peak_annotation")
+        expand(join(WORKDIR,"qc","frip","{grp}.frip"),grp=GROUPS)
     output:
         multiqchtml=join(WORKDIR,"qc","multiqc_report.html"),
         qcstatstable=join(WORKDIR,"qc","QCStats.txt")
