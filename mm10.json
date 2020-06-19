@@ -282,7 +282,10 @@
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes/mm10.fa.sizes",
             }, 
-
+"ATACseq":{
+    "GENOME":"mm10",
+    "INDEX_DIR":"/data/CCBR_Pipeliner/db/PipeDB/Indices/mm10_basic/indexes",
+}
 
   }
 
