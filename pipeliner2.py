@@ -271,7 +271,7 @@ class PipelinerGUI(Tk):
                                                'ATACseq', #self.pfamily.get(), 
                                                self.annotation, global_info=self )
 
-        if self.pfamily.get() == 'exomeseq' :
+        elif self.pfamily.get() == 'exomeseq' :
             print( 'exomeseq' )
             if not annotation in set4:
             	outtxt_short="%s is not supported in this pipeline!"%(annotation)
