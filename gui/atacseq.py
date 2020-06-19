@@ -72,35 +72,6 @@ This feature is coming soon.... Stay tuned!
         self.om_coming_soon = LabelFrame(eframe, text="Coming Soon!")
         self.coming_soon_button = Button(self.om_coming_soon, text="Coming Soon!!!!!", command=self.coming_soon)
         self.coming_soon_button.grid(row=5, column=5, padx=10, pady=5)
-
-        #####################
-        #Sample Threshold 
-        #####################
-        self.sampleLF = sampleLF = LabelFrame( eframe, 
-                                              text="Low Abundance Gene Thresholds" )
-        
-        self.rMincount = rMincount = StringVar()
-        rMincount.set("0.5")
-        self.rMinsamples = rMinsamples = StringVar()
-        rMinsamples.set("2")
-        
-        #rMincount.trace('w', lambda a,b,c,x="rmincount": makejson(x))
-
-        #Filter out genes < [5] read counts in < [2] samples
-#         rminsamplesL = Label(sampleLF, text="Include genes with >=") # in")
-#         rmincountE = Entry(sampleLF, bd =2, width=3, textvariable=rMincount)
-#         rmincountL = Label(sampleLF, text="CPM in  >=")
-#         rminsamplesE = Entry(sampleLF, bd =2, width=3, textvariable=rMinsamples)
-#         rminsamplesR = Label(sampleLF, text="samples")
-#         
-#         rminsamplesL.grid(row=9,column=1,sticky=W,padx=10,pady=5)
-#         rmincountE.grid(row=9,column=2,sticky=W,padx=0,pady=5)
-#         rmincountL.grid(row=9,column=3,sticky=W,padx=5,pady=5)
-#         rminsamplesE.grid(row=9,column=4,sticky=W,padx=0,pady=5)
-#         rminsamplesR.grid(row=9,column=5,sticky=W,padx=10,pady=5)
-#         #rMinsamples.trace('w', lambda a,b,c,x="rmincount": makejson(x))
-        
-        sampleLF.grid( row=6, column=0, columnspan=4, sticky=W, padx=20, pady=10 )
         #####################
         
         self.add_info(eframe)
@@ -186,9 +157,7 @@ This feature is coming soon.... Stay tuned!
     def makejson(self, *args):
         #print(args[0])
         caller=args[0]
-        #global PD
-        #global UnitsBak
-        #global RGbak
+
         D=dict()
         try:
             F=open(self.workpath.get()+"/samples","r")
@@ -217,30 +186,16 @@ This feature is coming soon.... Stay tuned!
 
             pairs=D
         except:
-            pairs={"na":"na"}   
+            pairs={"na":"na"}
 
         D=dict()
         try:
             F=open(self.workpath.get()+"/contrasts.tab","r")
-    #        f=F.read().split('\n')
-    #        F.close()
-    #        D["rsamps"]=f[0].split()
-    #        D["rgroups"]=f[1].split()
-    #        D["rcontrasts"]=f[2].split()
-    #        D["rlabels"]=f[3].split()        
             f=F.readlines()
             F.close()
-    ##        sampl=[]
-    ##        grp=[]
             cont=[]
             cont_cpm_cutoff=[]
             cont_mincount=[]
-    ##        lbl=[]
-## contrasts.tab can have 2,3 or 4 columns
-# col 1 and 2 are group1 and group2 respectively
-# col 3 is CPM cutoff value ... if not provided 0.5 will be used
-# col 4 is either min number of sample per group that need to satisfy the cpm cutoff criteria or fraction of samples that need
-#       to satisfy the criteria... can be integer >=1 ... or fraction >=0.5 and <1    
             for x in f:
                   xsplit=x.split()
                   if len(xsplit) == 4:
@@ -400,20 +355,7 @@ This feature is coming soon.... Stay tuned!
                 "technique" : gi.technique.get(), 
                 "TRIM": "yes", 
                 "groups": groups,
-                "contrasts": contrasts,
-                "SJDBOVERHANG": self.rReadlen.get().split(" ")[3],
-                "STRANDED": self.rStrand.get().split(",")[0],
-                "DEG": self.rDeg.get().split(",")[0].lower(),
-                "STARSTRANDCOL": "{0}".format(int(self.rStrand.get().split(",")[0])+2),
-                "MINSAMPLES": self.rMinsamples.get(),
-                "MINCOUNTGENES": self.rMincount.get(),
-                "MINCOUNTJUNCTIONS": self.rMincount.get(),
-                "MINCOUNTGENEJUNCTIONS": self.rMincount.get(),
-                "STARDIR": SD + self.rReadlen.get().split(" ")[3],
-                "PICARDSTRAND": ["NONE", 
-                                 "FIRST_READ_TRANSCRIPTION_STRAND",
-                                 "SECOND_READ_TRANSCRIPTION_STRAND"] 
-                                [int(self.rStrand.get().split(",")[0])]
+                "contrasts": contrasts
              }
         } 
         
