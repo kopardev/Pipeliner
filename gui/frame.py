@@ -650,6 +650,11 @@ class PipelineFrame( Frame ) :
                         print("Found 'peakcall.tab': Symlinking file!")
                         cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                elif pl == "ATACseq":
+                    if os.path.isfile(os.path.join(data, "groups.tab")):
+                        print("Found 'groups.tab': Symlinking file!")
+                        cmd="cp {0}groups.tab {1}".format(data, self.workpath.get())
+                        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
                 elif pl == 'RNAseq':
                     print("\n\nChecking for 'counts/' directory...")
                     if os.path.isdir(os.path.join(data,"counts")):
@@ -682,7 +687,7 @@ class PipelineFrame( Frame ) :
                         cmd="for f in `ls {0}/*[._]vcf`;do ln -s $f {1};done".format(gvcfspath,self.workpath.get())
                         #print(cmd,"\n","Pipeline_name", pl,"\n" , "Data", data)
                         p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-                elif pl == 'ChIPseq':
+                elif pl == 'ChIPseq' or pl == 'ATACseq':
                     if os.path.isfile(os.path.join(data, "peakcall.tab")):
                         print("Found 'peakcall.tab': Symlinking file!")
                         cmd="cp {0}peakcall.tab {1}".format(data, self.workpath.get())
