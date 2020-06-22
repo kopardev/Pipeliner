@@ -94,41 +94,41 @@ rule all:
         expand(join(WORKDIR,"bam","{sample}.dedup.bam"),sample=SAMPLES),
         expand(join(WORKDIR,"bam","{sample}.genome"),sample=SAMPLES),
         expand(join(WORKDIR,"bam","{sample}.qsorted.bam"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R1_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R2_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","{sample}.nreads.txt"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R1.noBL_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R2.noBL_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","{sample}.dupmetric"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","preseq","{sample}.nrf"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R1_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R2_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","{sample}.nreads.txt"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R1.noBL_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R2.noBL_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","{sample}.dupmetric"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","preseq","{sample}.nrf"),sample=SAMPLES),
         expand(join(WORKDIR,"peaks","macs2","{grp}.group.macs2.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","macs2","{grp}.sample.macs2.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","macs2","{grp}.macs2.tn5knicksbedfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","genrich","{grp}.group.genrich.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","genrich","{grp}.sample.genrich.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","genrich","{grp}.genrich.tn5knicksbedfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"qc","fld","{sample}.fld.txt"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","tss","{sample}.tss.txt"),sample=SAMPLES),
-        join(WORKDIR,"qc","jaccard","macs2.sample.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","macs2.group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","macs2.sample_group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","genrich.sample.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","genrich.group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","genrich.sample_group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","allmethods.sample.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","allmethods.group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","allmethods.sample_group.jaccard.pca.html"),
-        expand(join(WORKDIR,"qc","frip","{grp}.frip"),grp=GROUPS),
+        expand(join(WORKDIR,"QC","fld","{sample}.fld.txt"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","tss","{sample}.tss.txt"),sample=SAMPLES),
+        join(WORKDIR,"QC","jaccard","macs2.sample.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","macs2.group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","macs2.sample_group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","genrich.sample.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","genrich.group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","genrich.sample_group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","allmethods.sample.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","allmethods.group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","allmethods.sample_group.jaccard.pca.html"),
+        expand(join(WORKDIR,"QC","frip","{grp}.frip"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","{method}","motifs","{grp}.{method}.motiffiles"),grp=GROUPS,method=["macs2","genrich"]),
-        join(WORKDIR,"qc","multiqc_report.html"),
-        join(WORKDIR,"qc","QCStats.txt")
+        join(WORKDIR,"QC","multiqc_report.html"),
+        join(WORKDIR,"QC","QCStats.txt")
 
 
 rule atac_tss:
     input:
         tagalign=join(WORKDIR,"tagAlign","{sample}.tagAlign.gz")
     output:
-        tss=join(WORKDIR,"qc","tss","{sample}.tss.txt")
+        tss=join(WORKDIR,"QC","tss","{sample}.tss.txt")
     params:
         rname='pl:tss',
         genome=GENOME,
@@ -136,6 +136,7 @@ rule atac_tss:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         sample="{sample}"
     threads: 56
     shell:"""
@@ -173,6 +174,7 @@ rule atac_motifs:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         grp="{grp}",
         method="{method}"
     threads: 56
@@ -205,7 +207,7 @@ rule atac_frip_init:
     input:
         unpack(get_frip_input)
     output:
-        outfile=join(WORKDIR,"qc","frip","{grp}.init.frip")
+        outfile=join(WORKDIR,"QC","frip","{grp}.init.frip")
     params:
         rname='pl:fripinit',
         genome=GENOME,
@@ -213,6 +215,7 @@ rule atac_frip_init:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         grp="{grp}"
     shell:"""
 set -e -x -o pipefail
@@ -303,9 +306,9 @@ fi
 
 rule atac_frip:
     input:
-        join(WORKDIR,"qc","frip","{grp}.init.frip")
+        join(WORKDIR,"QC","frip","{grp}.init.frip")
     output:
-        join(WORKDIR,"qc","frip","{grp}.frip")
+        join(WORKDIR,"QC","frip","{grp}.frip")
     params:
         rname='pl:frip',
         genome=GENOME,
@@ -313,6 +316,7 @@ rule atac_frip:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         grp="{grp}"
     shell:"""
 set -e -x -o pipefail
@@ -357,19 +361,20 @@ rule atac_trim_align_dedup:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         sample="{sample}"
     threads: 56
     output:
         ta=join(WORKDIR,"tagAlign","{sample}.tagAlign.gz"),
-        fastqcraw1=join(WORKDIR,"qc","fastqc","{sample}.R1_fastqc.zip"),
-        fastqcraw2=join(WORKDIR,"qc","fastqc","{sample}.R2_fastqc.zip"),
-        fastqc1=join(WORKDIR,"qc","fastqc","{sample}.R1.noBL_fastqc.zip"),
-        fastqc2=join(WORKDIR,"qc","fastqc","{sample}.R2.noBL_fastqc.zip"),
-        nreads=join(WORKDIR,"qc","{sample}.nreads.txt"),
-        nrf=join(WORKDIR,"qc","preseq","{sample}.nrf"),
+        fastqcraw1=join(WORKDIR,"QC","fastqc","{sample}.R1_fastqc.zip"),
+        fastqcraw2=join(WORKDIR,"QC","fastqc","{sample}.R2_fastqc.zip"),
+        fastqc1=join(WORKDIR,"QC","fastqc","{sample}.R1.noBL_fastqc.zip"),
+        fastqc2=join(WORKDIR,"QC","fastqc","{sample}.R2.noBL_fastqc.zip"),
+        nreads=join(WORKDIR,"QC","{sample}.nreads.txt"),
+        nrf=join(WORKDIR,"QC","preseq","{sample}.nrf"),
         dedupbam=join(WORKDIR,"bam","{sample}.dedup.bam"),
         qsortedbam=join(WORKDIR,"bam","{sample}.qsorted.bam"),
-        picardout=join(WORKDIR,"qc","{sample}.dupmetric"),
+        picardout=join(WORKDIR,"QC","{sample}.dupmetric"),
         genomefile=join(WORKDIR,"bam","{sample}.genome"),
         trimfq1=join(WORKDIR,"trim","{sample}.R1.trim.fastq.gz"),
         trimfq2=join(WORKDIR,"trim","{sample}.R2.trim.fastq.gz")
@@ -401,25 +406,25 @@ rsync -az --progress {params.sample}.qsorted.bam {params.workdir}/bam/
 
 rsync -az --progress {params.sample}.tagAlign.gz {params.workdir}/tagAlign/
 
-rsync -az --progress {params.sample}.bowtie2.bam.flagstat {params.workdir}/qc/
-rsync -az --progress {params.sample}.bowtie2.log {params.workdir}/qc/
-rsync -az --progress {params.sample}.dedup.bam.flagstat {params.workdir}/qc/
-rsync -az --progress {params.sample}.dupmetric {params.workdir}/qc/
-rsync -az --progress {params.sample}.filt.bam.flagstat {params.workdir}/qc/
-rsync -az --progress {params.sample}.nreads.txt {params.workdir}/qc/
+rsync -az --progress {params.sample}.bowtie2.bam.flagstat {params.qcdir}/
+rsync -az --progress {params.sample}.bowtie2.log {params.qcdir}/
+rsync -az --progress {params.sample}.dedup.bam.flagstat {params.qcdir}/
+rsync -az --progress {params.sample}.dupmetric {params.qcdir}/
+rsync -az --progress {params.sample}.filt.bam.flagstat {params.qcdir}/
+rsync -az --progress {params.sample}.nreads.txt {params.qcdir}/
 
-rsync -az --progress {params.sample}.nrf {params.workdir}/qc/preseq/
-rsync -az --progress {params.sample}.preseq {params.workdir}/qc/preseq/
-rsync -az --progress {params.sample}.preseq.log {params.workdir}/qc/preseq/
+rsync -az --progress {params.sample}.nrf {params.qcdir}/preseq/
+rsync -az --progress {params.sample}.preseq {params.qcdir}/preseq/
+rsync -az --progress {params.sample}.preseq.log {params.qcdir}/preseq/
 
-rsync -az --progress {params.sample}.R1.noBL_fastqc.html {params.workdir}/qc/fastqc/
-rsync -az --progress {params.sample}.R2.noBL_fastqc.html {params.workdir}/qc/fastqc/
-rsync -az --progress {params.sample}.R1.noBL_fastqc.zip {params.workdir}/qc/fastqc/
-rsync -az --progress {params.sample}.R2.noBL_fastqc.zip {params.workdir}/qc/fastqc/
-rsync -az --progress {params.sample}.R1_fastqc.html {params.workdir}/qc/fastqc/
-rsync -az --progress {params.sample}.R2_fastqc.html {params.workdir}/qc/fastqc/
-rsync -az --progress {params.sample}.R1_fastqc.zip {params.workdir}/qc/fastqc/
-rsync -az --progress {params.sample}.R2_fastqc.zip {params.workdir}/qc/fastqc/
+rsync -az --progress {params.sample}.R1.noBL_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2.noBL_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R1.noBL_fastqc.zip {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2.noBL_fastqc.zip {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R1_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R1_fastqc.zip {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2_fastqc.zip {params.qcdir}/fastqc/
 
 rsync -az --progress {params.sample}.R1.trim.fastq.gz {params.workdir}/trim/
 rsync -az --progress {params.sample}.R2.trim.fastq.gz {params.workdir}/trim/
@@ -437,6 +442,7 @@ rule atac_macs_peakcalling:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         grp="{grp}"
     output:
         groupPeakFileList=join(WORKDIR,"peaks","macs2","{grp}.group.macs2.peakfiles"),
@@ -450,7 +456,7 @@ rsync -Laz --progress $f /lscratch/$SLURM_JOBID/
 done
 if [ ! -d {params.workdir}/peaks/macs2/bigwig ];then mkdir -p {params.workdir}/peaks/macs2/bigwig;fi
 if [ ! -d {params.workdir}/peaks/macs2/tn5knicks ];then mkdir -p {params.workdir}/peaks/macs2/tn5knicks;fi
-if [ ! -d {params.workdir}/qc/peak_annotation ];then mkdir -p {params.workdir}/qc/peak_annotation;fi
+if [ ! -d {params.qcdir}/peak_annotation ];then mkdir -p {params.qcdir}/peak_annotation;fi
 
 cd /lscratch/$SLURM_JOBID
 
@@ -500,8 +506,8 @@ do
 
     for g in "annotated" "genelist" "annotation_summary" "annotation_distribution"
     do
-        rsync -az --progress ${{f}}.macs2.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
-        rsync -az --progress ${{f}}.macs2.qfilter.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
+        rsync -az --progress ${{f}}.macs2.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
+        rsync -az --progress ${{f}}.macs2.qfilter.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
     done
 
     rsync -az --progress ${{f}}.macs2.bw {params.workdir}/peaks/macs2/bigwig/
@@ -551,8 +557,8 @@ do
 
     for g in "annotated" "genelist" "annotation_summary" "annotation_distribution"
     do
-        rsync -az --progress ${{f}}.macs2.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
-        rsync -az --progress ${{f}}.macs2.qfilter.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
+        rsync -az --progress ${{f}}.macs2.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
+        rsync -az --progress ${{f}}.macs2.qfilter.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
     done
 
     rsync -az --progress ${{f}}.macs2.bw {params.workdir}/peaks/macs2/bigwig/
@@ -577,7 +583,7 @@ if [ "$nsamples" -ge "2" ];then
 rsync -az --progress {params.grp}.macs2.consensus.bed {params.workdir}/peaks/macs2/
 for g in "annotated" "genelist" "annotation_summary" "annotation_distribution"
 do
-    rsync -az --progress {params.grp}.macs2.consensus.bed.${{g}} {params.workdir}/qc/peak_annotation/
+    rsync -az --progress {params.grp}.macs2.consensus.bed.${{g}} {params.qcdir}/peak_annotation/
 done
 
 echo -ne "{params.grp}\t{params.grp}\t{params.workdir}/peaks/macs2/{params.grp}.macs2.consensus.bed\n" > {output.groupPeakFileList}
@@ -599,7 +605,7 @@ rule atac_fld:
     input:
         dedupbam=join(WORKDIR,"bam","{sample}.dedup.bam")
     output:
-        fld=join(WORKDIR,"qc","fld","{sample}.fld.txt")
+        fld=join(WORKDIR,"QC","fld","{sample}.fld.txt")
     params:
         rname='pl:fld',
         genome=GENOME,
@@ -607,6 +613,7 @@ rule atac_fld:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         sample="{sample}"
     shell:"""
 set -e -x -o pipefail
@@ -641,6 +648,7 @@ rule atac_genrich_peakcalling:
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
         grp="{grp}"
     output:
         groupPeakFileList=join(WORKDIR,"peaks","genrich","{grp}.group.genrich.peakfiles"),
@@ -663,7 +671,7 @@ done
 
 if [ ! -d {params.workdir}/peaks/genrich/bigwig ];then mkdir -p {params.workdir}/peaks/genrich/bigwig;fi
 if [ ! -d {params.workdir}/peaks/genrich/tn5knicks ];then mkdir -p {params.workdir}/peaks/genrich/tn5knicks;fi
-if [ ! -d {params.workdir}/qc/peak_annotation ];then mkdir -p {params.workdir}/qc/peak_annotation;fi
+if [ ! -d {params.qcdir}/peak_annotation ];then mkdir -p {params.qcdir}/peak_annotation;fi
 
 rep1name=$(echo {input.qsortedbam1}|awk -F"/" "{{print \$NF}}"|awk -F".qsorted" "{{print \$1}}")
 qsortedbam1=$(echo {input.qsortedbam1}|awk -F"/" "{{print \$NF}}")
@@ -710,8 +718,8 @@ do
 
     for g in "annotated" "genelist" "annotation_summary" "annotation_distribution"
     do
-        rsync -az --progress ${{f}}.genrich.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
-        rsync -az --progress ${{f}}.genrich.qfilter.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
+        rsync -az --progress ${{f}}.genrich.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
+        rsync -az --progress ${{f}}.genrich.qfilter.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
     done
 
     rsync -az --progress ${{f}}.genrich.reads.bw {params.workdir}/peaks/genrich/bigwig/
@@ -763,8 +771,8 @@ do
 
     for g in "annotated" "genelist" "annotation_summary" "annotation_distribution"
     do
-        rsync -az --progress ${{f}}.genrich.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
-        rsync -az --progress ${{f}}.genrich.qfilter.narrowPeak.${{g}} {params.workdir}/qc/peak_annotation/
+        rsync -az --progress ${{f}}.genrich.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
+        rsync -az --progress ${{f}}.genrich.qfilter.narrowPeak.${{g}} {params.qcdir}/peak_annotation/
     done
 
     rsync -az --progress ${{f}}.genrich.reads.bw {params.workdir}/peaks/genrich/bigwig/
@@ -788,7 +796,7 @@ if [ "$nsamples" -ge "2" ];then
 rsync -az --progress {params.grp}.genrich.consensus.bed {params.workdir}/peaks/genrich/
 for g in "annotated" "genelist" "annotation_summary" "annotation_distribution"
 do
-    rsync -az --progress {params.grp}.genrich.consensus.bed.${{g}} {params.workdir}/qc/peak_annotation/
+    rsync -az --progress {params.grp}.genrich.consensus.bed.${{g}} {params.qcdir}/peak_annotation/
 done
 
 echo -ne "{params.grp}\t{params.grp}\t{params.workdir}/peaks/genrich/{params.grp}.genrich.consensus.bed\n" > {output.groupPeakFileList}
@@ -806,15 +814,15 @@ rule jaccard:
         expand(join(WORKDIR,"peaks","genrich","{grp}.group.genrich.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","genrich","{grp}.sample.genrich.peakfiles"),grp=GROUPS)
     output:
-        macs2persamplejaccardpca=join(WORKDIR,"qc","jaccard","macs2.sample.jaccard.pca.html"),
-        macs2pergroupjaccardpca=join(WORKDIR,"qc","jaccard","macs2.group.jaccard.pca.html"),
-        macs2persamplegroupjaccardpca=join(WORKDIR,"qc","jaccard","macs2.sample_group.jaccard.pca.html"),
-        genrichpersamplejaccardpca=join(WORKDIR,"qc","jaccard","genrich.sample.jaccard.pca.html"),
-        genrichpergroupjaccardpca=join(WORKDIR,"qc","jaccard","genrich.group.jaccard.pca.html"),
-        genrichpersamplegroupjaccardpca=join(WORKDIR,"qc","jaccard","genrich.sample_group.jaccard.pca.html"),
-        allmethodspersamplejaccardpca=join(WORKDIR,"qc","jaccard","allmethods.sample.jaccard.pca.html"),
-        allmethodspergroupjaccardpca=join(WORKDIR,"qc","jaccard","allmethods.group.jaccard.pca.html"),
-        allmethodspersamplegroupjaccardpca=join(WORKDIR,"qc","jaccard","allmethods.sample_group.jaccard.pca.html")
+        macs2persamplejaccardpca=join(WORKDIR,"QC","jaccard","macs2.sample.jaccard.pca.html"),
+        macs2pergroupjaccardpca=join(WORKDIR,"QC","jaccard","macs2.group.jaccard.pca.html"),
+        macs2persamplegroupjaccardpca=join(WORKDIR,"QC","jaccard","macs2.sample_group.jaccard.pca.html"),
+        genrichpersamplejaccardpca=join(WORKDIR,"QC","jaccard","genrich.sample.jaccard.pca.html"),
+        genrichpergroupjaccardpca=join(WORKDIR,"QC","jaccard","genrich.group.jaccard.pca.html"),
+        genrichpersamplegroupjaccardpca=join(WORKDIR,"QC","jaccard","genrich.sample_group.jaccard.pca.html"),
+        allmethodspersamplejaccardpca=join(WORKDIR,"QC","jaccard","allmethods.sample.jaccard.pca.html"),
+        allmethodspergroupjaccardpca=join(WORKDIR,"QC","jaccard","allmethods.group.jaccard.pca.html"),
+        allmethodspersamplegroupjaccardpca=join(WORKDIR,"QC","jaccard","allmethods.sample_group.jaccard.pca.html")
     params:
         rname='pl:jaccard',
         genome=GENOME,
@@ -877,8 +885,8 @@ for m in "macs2" "genrich" "allmethods";do
         --pairwise ${{m}}.${{f}}.jaccard.pairwise.txt \
         --pcahtml ${{m}}.${{f}}.jaccard.pca.html \
         --scriptsfolder {params.scriptsdir}
-        rsync -az --progress ${{m}}.${{f}}.jaccard.pairwise.txt {params.workdir}/qc/jaccard/
-        rsync -az --progress ${{m}}.${{f}}.jaccard.pca.html {params.workdir}/qc/jaccard/
+        rsync -az --progress ${{m}}.${{f}}.jaccard.pairwise.txt {params.qcdir}/jaccard/
+        rsync -az --progress ${{m}}.${{f}}.jaccard.pca.html {params.qcdir}/jaccard/
     done
 done
 
@@ -889,32 +897,32 @@ done
 
 rule atac_multiqc:
     input:
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R1_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R2_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","{sample}.nreads.txt"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R1.noBL_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","fastqc","{sample}.R2.noBL_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","{sample}.dupmetric"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","preseq","{sample}.nrf"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R1_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R2_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","{sample}.nreads.txt"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R1.noBL_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","fastqc","{sample}.R2.noBL_fastqc.zip"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","{sample}.dupmetric"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","preseq","{sample}.nrf"),sample=SAMPLES),
         expand(join(WORKDIR,"peaks","macs2","{grp}.group.macs2.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","macs2","{grp}.sample.macs2.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","genrich","{grp}.group.genrich.peakfiles"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","genrich","{grp}.sample.genrich.peakfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"qc","fld","{sample}.fld.txt"),sample=SAMPLES),
-        expand(join(WORKDIR,"qc","tss","{sample}.tss.txt"),sample=SAMPLES),
-        join(WORKDIR,"qc","jaccard","macs2.sample.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","macs2.group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","macs2.sample_group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","genrich.sample.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","genrich.group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","genrich.sample_group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","allmethods.sample.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","allmethods.group.jaccard.pca.html"),
-        join(WORKDIR,"qc","jaccard","allmethods.sample_group.jaccard.pca.html"),
-        expand(join(WORKDIR,"qc","frip","{grp}.frip"),grp=GROUPS)
+        expand(join(WORKDIR,"QC","fld","{sample}.fld.txt"),sample=SAMPLES),
+        expand(join(WORKDIR,"QC","tss","{sample}.tss.txt"),sample=SAMPLES),
+        join(WORKDIR,"QC","jaccard","macs2.sample.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","macs2.group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","macs2.sample_group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","genrich.sample.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","genrich.group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","genrich.sample_group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","allmethods.sample.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","allmethods.group.jaccard.pca.html"),
+        join(WORKDIR,"QC","jaccard","allmethods.sample_group.jaccard.pca.html"),
+        expand(join(WORKDIR,"QC","frip","{grp}.frip"),grp=GROUPS)
     output:
-        multiqchtml=join(WORKDIR,"qc","multiqc_report.html"),
-        qcstatstable=join(WORKDIR,"qc","QCStats.txt")
+        multiqchtml=join(WORKDIR,"QC","multiqc_report.html"),
+        qcstatstable=join(WORKDIR,"QC","QCStats.txt")
     params:
         rname='pl:qc',
         genome=GENOME,
