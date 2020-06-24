@@ -829,7 +829,8 @@ rule jaccard:
         singularity_sif=SINGULARITY_SIF,
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
-        scriptsdir=SCRIPTS_DIR
+        scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC")
     shell:"""
 set -e -x -o pipefail
 module load singularity
@@ -929,15 +930,16 @@ rule atac_multiqc:
         singularity_sif=SINGULARITY_SIF,
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
-        scriptsdir=SCRIPTS_DIR
+        scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC")
     shell:"""
 set -e -x -o pipefail
 module load singularity
-cd {params.workdir}/qc
+cd {params.qcdir}
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
  -B {params.workdir}/:/data2/,{params.index_dir}/:/index \
  {params.singularity_sif} \
  bash {params.scriptsdir}/ccbr_atac_qc.bash \
- --qcfolder /data2/qc \
+ --qcfolder /data2/QC \
  --scriptsfolder {params.scriptsdir}
 """
