@@ -357,6 +357,9 @@
             "KRAKENBACDB": "/fdb/kraken/20170202_bacteria",
             "REFLEN":"/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/indexes/hg38.fa.sizes",
      },
-     
+     "ATACseq":{
+        "GENOME":"hg38",
+        "INDEX_DIR":"/data/CCBR_Pipeliner/db/PipeDB/Indices/hg38_basic/indexes",
+    }     
     }
 }
