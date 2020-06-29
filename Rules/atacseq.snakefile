@@ -350,84 +350,40 @@ rsync -Laz --progress {params.grp}.frip {output}
 """        
 
 
-rule atac_trim_align_dedup:
+rule atac_fqscreen:
     input:
-        infq1="{sample}.R1.fastq.gz",
-        infq2="{sample}.R2.fastq.gz"
+        expand(join(WORKDIR,"trim","{sample}.{r1r2}.trim.fastq.gz"),sample=SAMPLES,r1r2=["R1","R2"])
     params:
-        rname='pl:tad',
+        rname='pl:fqscreen',
         genome=GENOME,
         singularity_sif=SINGULARITY_SIF,
         index_dir=INDEX_DIR,
         workdir=WORKDIR,
         scriptsdir=SCRIPTS_DIR,
-        qcdir=join(WORKDIR,"QC"),
-        sample="{sample}"
+        qcdir=join(WORKDIR,"QC")
     threads: 56
     output:
-        ta=join(WORKDIR,"tagAlign","{sample}.tagAlign.gz"),
-        fastqcraw1=join(WORKDIR,"QC","fastqc","{sample}.R1_fastqc.zip"),
-        fastqcraw2=join(WORKDIR,"QC","fastqc","{sample}.R2_fastqc.zip"),
-        fastqc1=join(WORKDIR,"QC","fastqc","{sample}.R1.noBL_fastqc.zip"),
-        fastqc2=join(WORKDIR,"QC","fastqc","{sample}.R2.noBL_fastqc.zip"),
-        nreads=join(WORKDIR,"QC","{sample}.nreads.txt"),
-        nrf=join(WORKDIR,"QC","preseq","{sample}.nrf"),
-        dedupbam=join(WORKDIR,"bam","{sample}.dedup.bam"),
-        qsortedbam=join(WORKDIR,"bam","{sample}.qsorted.bam"),
-        picardout=join(WORKDIR,"QC","{sample}.dupmetric"),
-        genomefile=join(WORKDIR,"bam","{sample}.genome"),
-        trimfq1=join(WORKDIR,"trim","{sample}.R1.trim.fastq.gz"),
-        trimfq2=join(WORKDIR,"trim","{sample}.R2.trim.fastq.gz")
-    shell:"""
+        fqscreendir=join(WORKDIR,"QC","FQscreen")
+shell:"""
 set -e -x -o pipefail
 
-rsync -Laz --progress {input.infq1} /lscratch/$SLURM_JOBID/
-rsync -Laz --progress {input.infq2} /lscratch/$SLURM_JOBID/
+for f in {input};do
+    rsync -Laz --progress $f /lscratch/$SLURM_JOBID/
+done
 cd /lscratch/$SLURM_JOBID
 
-module load singularity
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+-B {params.workdir}/:/data2/
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_atac_trim_align_pe.bash \
---infastq1 {input.infq1} \
---infastq2 {input.infq2} \
---threads {threads} \
---genome {params.genome} \
---scriptsfolder {params.scriptsdir} \
---keepfiles True
+bash {params.scriptsdir}/ccbr_fqscreen.bash \
+--thread {threads} \
+--infastq $(ls *fastq.gz) \
+--confurl https://hpc.nih.gov/~CCBR/sbg_reference_bundle/fastq_screen.conf \
+--dblisturl https://hpc.nih.gov/~CCBR/sbg_reference_bundle/fastq_screen_databases_list.txt
 
-ls -larth
-
-rsync -az --progress {params.sample}.dedup.bam {params.workdir}/bam/
-rsync -az --progress {params.sample}.genome {params.workdir}/bam/
-rsync -az --progress {params.sample}.dedup.bam.bai {params.workdir}/bam/
-rsync -az --progress {params.sample}.qsorted.bam {params.workdir}/bam/
-
-rsync -az --progress {params.sample}.tagAlign.gz {params.workdir}/tagAlign/
-
-rsync -az --progress {params.sample}.bowtie2.bam.flagstat {params.qcdir}/
-rsync -az --progress {params.sample}.bowtie2.log {params.qcdir}/
-rsync -az --progress {params.sample}.dedup.bam.flagstat {params.qcdir}/
-rsync -az --progress {params.sample}.dupmetric {params.qcdir}/
-rsync -az --progress {params.sample}.filt.bam.flagstat {params.qcdir}/
-rsync -az --progress {params.sample}.nreads.txt {params.qcdir}/
-
-rsync -az --progress {params.sample}.nrf {params.qcdir}/preseq/
-rsync -az --progress {params.sample}.preseq {params.qcdir}/preseq/
-rsync -az --progress {params.sample}.preseq.log {params.qcdir}/preseq/
-
-rsync -az --progress {params.sample}.R1.noBL_fastqc.html {params.qcdir}/fastqc/
-rsync -az --progress {params.sample}.R2.noBL_fastqc.html {params.qcdir}/fastqc/
-rsync -az --progress {params.sample}.R1.noBL_fastqc.zip {params.qcdir}/fastqc/
-rsync -az --progress {params.sample}.R2.noBL_fastqc.zip {params.qcdir}/fastqc/
-rsync -az --progress {params.sample}.R1_fastqc.html {params.qcdir}/fastqc/
-rsync -az --progress {params.sample}.R2_fastqc.html {params.qcdir}/fastqc/
-rsync -az --progress {params.sample}.R1_fastqc.zip {params.qcdir}/fastqc/
-rsync -az --progress {params.sample}.R2_fastqc.zip {params.qcdir}/fastqc/
-
-rsync -az --progress {params.sample}.R1.trim.fastq.gz {params.workdir}/trim/
-rsync -az --progress {params.sample}.R2.trim.fastq.gz {params.workdir}/trim/
+for f in $(ls *_screen.*);do
+rsync -az --progress $f {output.fqscreendir}/
+done
 
 """
 
