@@ -121,7 +121,8 @@ rule all:
         expand(join(WORKDIR,"QC","frip","{grp}.frip"),grp=GROUPS),
         expand(join(WORKDIR,"peaks","{method}","motifs","{grp}.{method}.motiffiles"),grp=GROUPS,method=["macs2","genrich"]),
         join(WORKDIR,"QC","multiqc_report.html"),
-        join(WORKDIR,"QC","QCStats.txt")
+        join(WORKDIR,"QC","QCStats.txt"),
+        fqscreendir=join(WORKDIR,"QC","FQscreen")
 
 
 rule atac_tss:
