@@ -338,7 +338,7 @@
         "NGSQC": "/data/CCBR_Pipeliner/db/PipeDB/ChIPseq/NGSQC_linux_x86_64",
             },
 "ATACseq":{
-    "SINGULARITY_SIF":"/data/CCBR_Pipeliner/db/PipeDB/db/SingularityImages/ccbr_atacseq_v0.1.23.sif",
+    "SINGULARITY_SIF":"/data/CCBR_Pipeliner/db/PipeDB/db/SingularityImages/ccbr_atacseq_v0.1.25.sif",
     "SCRIPTS_DIR":"/opt2",
     "N_REPLICATES_MAX":3,
 },
