@@ -367,6 +367,7 @@ rule atac_fqscreen:
         fqscreendir=join(WORKDIR,"QC","FQscreen")
     shell:"""
 set -e -x -o pipefail
+module load singularity
 
 for f in {input};do
     rsync -Laz --progress $f /lscratch/$SLURM_JOBID/
