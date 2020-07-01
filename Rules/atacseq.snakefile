@@ -382,6 +382,9 @@ bash {params.scriptsdir}/ccbr_fqscreen.bash \
 --confurl https://hpc.nih.gov/~CCBR/sbg_reference_bundle/fastq_screen.conf \
 --dblisturl https://hpc.nih.gov/~CCBR/sbg_reference_bundle/fastq_screen_databases_list.txt
 
+if [ ! -d {output.fqscreendir} ];then
+mkdir -p {output.fqscreendir}
+fi
 for f in $(ls *_screen.*);do
 rsync -az --progress $f {output.fqscreendir}/
 done
