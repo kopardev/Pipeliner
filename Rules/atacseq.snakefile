@@ -365,7 +365,7 @@ rule atac_fqscreen:
     threads: 56
     output:
         fqscreendir=join(WORKDIR,"QC","FQscreen")
-shell:"""
+    shell:"""
 set -e -x -o pipefail
 
 for f in {input};do
