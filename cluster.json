@@ -968,5 +968,12 @@
         "threads": "2",
         "time": "4:00:00",
         "partition": "norm,ccr"
+    },
+    "atac_fqscreen": {
+        "mem": "40g",
+        "threads": "56",
+        "time": "24:00:00",
+        "partition": "norm,ccr",
+        "gres": "lscratch:256"
     }
 }
