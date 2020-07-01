@@ -970,7 +970,7 @@
         "partition": "norm,ccr"
     },
     "atac_fqscreen": {
-        "mem": "40g",
+        "mem": "120g",
         "threads": "56",
         "time": "24:00:00",
         "partition": "norm,ccr",
