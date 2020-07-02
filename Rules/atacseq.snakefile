@@ -375,7 +375,7 @@ done
 cd /lscratch/$SLURM_JOBID
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/
+-B {params.workdir}/:/data2/ \
 {params.singularity_sif} \
 bash {params.scriptsdir}/ccbr_fqscreen.bash \
 --thread {threads} \
