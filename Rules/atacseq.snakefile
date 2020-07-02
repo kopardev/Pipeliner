@@ -503,7 +503,6 @@ bash {params.scriptsdir}/ccbr_macs2_peak_calling.bash \
 --rep3name $rep3name \
 --samplename {params.grp} \
 --genome {params.genome} \
---genomefile $genomefile1 \
 --consensusbedfile {params.grp}.macs2.consensus.bed \
 --scriptsfolder {params.scriptsdir}
 
