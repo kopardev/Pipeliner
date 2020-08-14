@@ -90,39 +90,121 @@ def get_frip_input(wildcards):
 
 rule all:
     input:
-        expand(join(WORKDIR,"tagAlign","{sample}.tagAlign.gz"),sample=SAMPLES),
-        expand(join(WORKDIR,"bam","{sample}.dedup.bam"),sample=SAMPLES),
-        expand(join(WORKDIR,"bam","{sample}.genome"),sample=SAMPLES),
-        expand(join(WORKDIR,"bam","{sample}.qsorted.bam"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","fastqc","{sample}.R1_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","fastqc","{sample}.R2_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","{sample}.nreads.txt"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","fastqc","{sample}.R1.noBL_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","fastqc","{sample}.R2.noBL_fastqc.zip"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","{sample}.dupmetric"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","preseq","{sample}.nrf"),sample=SAMPLES),
-        expand(join(WORKDIR,"peaks","macs2","{grp}.group.macs2.peakfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"peaks","macs2","{grp}.sample.macs2.peakfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"peaks","macs2","{grp}.macs2.tn5knicksbedfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"peaks","genrich","{grp}.group.genrich.peakfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"peaks","genrich","{grp}.sample.genrich.peakfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"peaks","genrich","{grp}.genrich.tn5knicksbedfiles"),grp=GROUPS),
-        expand(join(WORKDIR,"QC","fld","{sample}.fld.txt"),sample=SAMPLES),
-        expand(join(WORKDIR,"QC","tss","{sample}.tss.txt"),sample=SAMPLES),
-        join(WORKDIR,"QC","jaccard","macs2.sample.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","macs2.group.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","macs2.sample_group.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","genrich.sample.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","genrich.group.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","genrich.sample_group.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","allmethods.sample.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","allmethods.group.jaccard.pca.html"),
-        join(WORKDIR,"QC","jaccard","allmethods.sample_group.jaccard.pca.html"),
-        expand(join(WORKDIR,"QC","frip","{grp}.frip"),grp=GROUPS),
-        expand(join(WORKDIR,"peaks","{method}","motifs","{grp}.{method}.motiffiles"),grp=GROUPS,method=["macs2","genrich"]),
-        join(WORKDIR,"QC","multiqc_report.html"),
-        join(WORKDIR,"QC","QCStats.txt"),
-        fqscreendir=join(WORKDIR,"QC","FQscreen")
+        expand(join(WORKDIR,"tagAlign","{sample}.tagAlign.gz"),sample=SAMPLES)
+        # expand(join(WORKDIR,"tagAlign","{sample}.tagAlign.gz"),sample=SAMPLES),
+        # expand(join(WORKDIR,"bam","{sample}.dedup.bam"),sample=SAMPLES),
+        # expand(join(WORKDIR,"bam","{sample}.genome"),sample=SAMPLES),
+        # expand(join(WORKDIR,"bam","{sample}.qsorted.bam"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","fastqc","{sample}.R1_fastqc.zip"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","fastqc","{sample}.R2_fastqc.zip"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","{sample}.nreads.txt"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","fastqc","{sample}.R1.noBL_fastqc.zip"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","fastqc","{sample}.R2.noBL_fastqc.zip"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","{sample}.dupmetric"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","preseq","{sample}.nrf"),sample=SAMPLES),
+        # expand(join(WORKDIR,"peaks","macs2","{grp}.group.macs2.peakfiles"),grp=GROUPS),
+        # expand(join(WORKDIR,"peaks","macs2","{grp}.sample.macs2.peakfiles"),grp=GROUPS),
+        # expand(join(WORKDIR,"peaks","macs2","{grp}.macs2.tn5knicksbedfiles"),grp=GROUPS),
+        # expand(join(WORKDIR,"peaks","genrich","{grp}.group.genrich.peakfiles"),grp=GROUPS),
+        # expand(join(WORKDIR,"peaks","genrich","{grp}.sample.genrich.peakfiles"),grp=GROUPS),
+        # expand(join(WORKDIR,"peaks","genrich","{grp}.genrich.tn5knicksbedfiles"),grp=GROUPS),
+        # expand(join(WORKDIR,"QC","fld","{sample}.fld.txt"),sample=SAMPLES),
+        # expand(join(WORKDIR,"QC","tss","{sample}.tss.txt"),sample=SAMPLES),
+        # join(WORKDIR,"QC","jaccard","macs2.sample.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","macs2.group.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","macs2.sample_group.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","genrich.sample.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","genrich.group.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","genrich.sample_group.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","allmethods.sample.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","allmethods.group.jaccard.pca.html"),
+        # join(WORKDIR,"QC","jaccard","allmethods.sample_group.jaccard.pca.html"),
+        # expand(join(WORKDIR,"QC","frip","{grp}.frip"),grp=GROUPS),
+        # expand(join(WORKDIR,"peaks","{method}","motifs","{grp}.{method}.motiffiles"),grp=GROUPS,method=["macs2","genrich"]),
+        # join(WORKDIR,"QC","multiqc_report.html"),
+        # join(WORKDIR,"QC","QCStats.txt"),
+        # fqscreendir=join(WORKDIR,"QC","FQscreen")
+
+rule atac_trim_align_dedup:
+    input:
+        infq1="{sample}.R1.fastq.gz",
+        infq2="{sample}.R2.fastq.gz"
+    params:
+        rname='pl:tad',
+        genome=GENOME,
+        singularity_sif=SINGULARITY_SIF,
+        index_dir=INDEX_DIR,
+        workdir=WORKDIR,
+        scriptsdir=SCRIPTS_DIR,
+        qcdir=join(WORKDIR,"QC"),
+        sample="{sample}"
+    threads: 56
+    output:
+        ta=join(WORKDIR,"tagAlign","{sample}.tagAlign.gz"),
+        fastqcraw1=join(WORKDIR,"QC","fastqc","{sample}.R1_fastqc.zip"),
+        fastqcraw2=join(WORKDIR,"QC","fastqc","{sample}.R2_fastqc.zip"),
+        fastqc1=join(WORKDIR,"QC","fastqc","{sample}.R1.noBL_fastqc.zip"),
+        fastqc2=join(WORKDIR,"QC","fastqc","{sample}.R2.noBL_fastqc.zip"),
+        nreads=join(WORKDIR,"QC","{sample}.nreads.txt"),
+        nrf=join(WORKDIR,"QC","preseq","{sample}.nrf"),
+        dedupbam=join(WORKDIR,"bam","{sample}.dedup.bam"),
+        qsortedbam=join(WORKDIR,"bam","{sample}.qsorted.bam"),
+        picardout=join(WORKDIR,"QC","{sample}.dupmetric"),
+        genomefile=join(WORKDIR,"bam","{sample}.genome"),
+        trimfq1=join(WORKDIR,"trim","{sample}.R1.trim.fastq.gz"),
+        trimfq2=join(WORKDIR,"trim","{sample}.R2.trim.fastq.gz")
+    shell:"""
+set -e -x -o pipefail
+
+rsync -Laz --progress {input.infq1} /lscratch/$SLURM_JOBID/
+rsync -Laz --progress {input.infq2} /lscratch/$SLURM_JOBID/
+cd /lscratch/$SLURM_JOBID
+
+module load singularity
+PYTHONNOUSERSITE=1 singularity exec --cleanenv \
+-B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+{params.singularity_sif} \
+bash {params.scriptsdir}/ccbr_atac_trim_align_pe.bash \
+--infastq1 {input.infq1} \
+--infastq2 {input.infq2} \
+--threads {threads} \
+--genome {params.genome} \
+--scriptsfolder {params.scriptsdir} \
+--keepfiles True
+
+ls -larth
+
+rsync -az --progress {params.sample}.dedup.bam {params.workdir}/bam/
+rsync -az --progress {params.sample}.genome {params.workdir}/bam/
+rsync -az --progress {params.sample}.dedup.bam.bai {params.workdir}/bam/
+rsync -az --progress {params.sample}.qsorted.bam {params.workdir}/bam/
+
+rsync -az --progress {params.sample}.tagAlign.gz {params.workdir}/tagAlign/
+
+rsync -az --progress {params.sample}.bowtie2.bam.flagstat {params.qcdir}/
+rsync -az --progress {params.sample}.bowtie2.log {params.qcdir}/
+rsync -az --progress {params.sample}.dedup.bam.flagstat {params.qcdir}/
+rsync -az --progress {params.sample}.dupmetric {params.qcdir}/
+rsync -az --progress {params.sample}.filt.bam.flagstat {params.qcdir}/
+rsync -az --progress {params.sample}.nreads.txt {params.qcdir}/
+
+rsync -az --progress {params.sample}.nrf {params.qcdir}/preseq/
+rsync -az --progress {params.sample}.preseq {params.qcdir}/preseq/
+rsync -az --progress {params.sample}.preseq.log {params.qcdir}/preseq/
+
+rsync -az --progress {params.sample}.R1.noBL_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2.noBL_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R1.noBL_fastqc.zip {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2.noBL_fastqc.zip {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R1_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2_fastqc.html {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R1_fastqc.zip {params.qcdir}/fastqc/
+rsync -az --progress {params.sample}.R2_fastqc.zip {params.qcdir}/fastqc/
+
+rsync -az --progress {params.sample}.R1.trim.fastq.gz {params.workdir}/trim/
+rsync -az --progress {params.sample}.R2.trim.fastq.gz {params.workdir}/trim/
+
+"""
 
 
 rule atac_tss:
