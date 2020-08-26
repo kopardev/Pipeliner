@@ -161,15 +161,15 @@ cd /lscratch/$SLURM_JOBID
 
 module load singularity
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+-B {params.workdir}/:/data2/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_atac_trim_align_pe.bash \
+bash -c "cd /lscratch/$SLURM_JOBID && {params.scriptsdir}/ccbr_atac_trim_align_pe.bash \
 --infastq1 {input.infq1} \
 --infastq2 {input.infq2} \
 --threads {threads} \
 --genome {params.genome} \
 --scriptsfolder {params.scriptsdir} \
---keepfiles True
+--keepfiles True"
 
 ls -larth
 
@@ -230,14 +230,14 @@ tagAlign=$(echo {input.tagalign}|awk -F"/" "{{print \$NF}}")
 outfn=$(echo {output.tss}|awk -F"/" "{{print \$NF}}")
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/ \
+-B {params.workdir}/:/data2/,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_tagAlign2TSS.bash \
+bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_tagAlign2TSS.bash \
 --tagaligngz $tagAlign \
 --genome {params.genome} \
 --tsstxt $outfn \
 --ncpus {threads} \
---scriptsfolder {params.scriptsdir}
+--scriptsfolder {params.scriptsdir}"
 
 rsync -az --progress $outfn {output.tss}
 
@@ -272,10 +272,10 @@ for i in {input};do
         PYTHONNOUSERSITE=1 singularity exec --cleanenv \
         -B {params.workdir}/:/workdir/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/data2 \
         {params.singularity_sif} \
-        bash {params.scriptsdir}/ccbr_atac_motif_enrichment.bash \
+        bash -c "cd /lscratch/$SLURM_JOBID/ &&{params.scriptsdir}/ccbr_atac_motif_enrichment.bash \
         --narrowpeak $narrowpeak_fn \
         --genome {params.genome} \
-        --threads {threads}
+        --threads {threads}"
         rsync -Laz --progress /lscratch/$SLURM_JOBID/motif_enrichment ${{filepath}}_motif_enrichment
         echo -ne "$sample\t$group\t${{filepath}}_motif_enrichment\n" >> {output}
         rm -rf /lscratch/$SLURM_JOBID/*
@@ -456,13 +456,13 @@ done
 cd /lscratch/$SLURM_JOBID
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/ \
+-B {params.workdir}/:/data2/,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_fqscreen.bash \
+bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_fqscreen.bash \
 --thread {threads} \
 --infastq $(ls *fastq.gz) \
 --confurl https://hpc.nih.gov/~CCBR/sbg_reference_bundle/fastq_screen.conf \
---dblisturl https://hpc.nih.gov/~CCBR/sbg_reference_bundle/fastq_screen_databases_list.txt
+--dblisturl https://hpc.nih.gov/~CCBR/sbg_reference_bundle/fastq_screen_databases_list.txt"
 
 if [ ! -d {output.fqscreendir} ];then
 mkdir -p {output.fqscreendir}
@@ -525,17 +525,16 @@ rep2name=$(echo {input.tagAlign2}|awk -F"/" "{{print \$NF}}"|awk -F".tagAlign" "
 tagAlign2=$(echo {input.tagAlign2}|awk -F"/" "{{print \$NF}}")
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+-B {params.workdir}/:/data2/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_macs2_peak_calling.bash \
+bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_macs2_peak_calling.bash \
 --tagalign1 $tagAlign1 \
 --tagalign2 $tagAlign2 \
 --rep1name $rep1name \
 --rep2name $rep2name \
 --samplename {params.grp} \
 --genome {params.genome} \
---consensusbedfile {params.grp}.macs2.consensus.bed \
---scriptsfolder {params.scriptsdir}
+--scriptsfolder {params.scriptsdir}"
 
 ls -larth
 
@@ -573,9 +572,9 @@ rep3name=$(echo {input.tagAlign3}|awk -F"/" "{{print \$NF}}"|awk -F".tagAlign" "
 tagAlign3=$(echo {input.tagAlign3}|awk -F"/" "{{print \$NF}}")
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+-B {params.workdir}/:/data2/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_macs2_peak_calling.bash \
+bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_macs2_peak_calling.bash \
 --tagalign1 $tagAlign1 \
 --tagalign2 $tagAlign2 \
 --tagalign3 $tagAlign3 \
@@ -584,8 +583,7 @@ bash {params.scriptsdir}/ccbr_macs2_peak_calling.bash \
 --rep3name $rep3name \
 --samplename {params.grp} \
 --genome {params.genome} \
---consensusbedfile {params.grp}.macs2.consensus.bed \
---scriptsfolder {params.scriptsdir}
+--scriptsfolder {params.scriptsdir}"
 
 ls -larth
 
@@ -666,12 +664,12 @@ fldfile=$(echo "{output.fld}"|awk -F"/" "{{print \$NF}}")
 cd /lscratch/$SLURM_JOBID
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/ \
+-B {params.workdir}/:/data2/,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_bam2FLD.bash \
+bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_bam2FLD.bash \
 --dedupbam $bamfile \
 --fldout $fldfile \
---scriptsfolder {params.scriptsdir}
+--scriptsfolder {params.scriptsdir}"
 
 rsync -az --progress $fldfile {output.fld}
 
@@ -736,9 +734,9 @@ qsortedbam2=$(echo {input.qsortedbam2}|awk -F"/" "{{print \$NF}}")
 peakfile2="${{rep2name}}.genrich.narrowPeak"
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+-B {params.workdir}/:/data2/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_genrich_peak_calling.bash \
+bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_genrich_peak_calling.bash \
 --bamrep1 $qsortedbam1 \
 --bamrep2 $qsortedbam2 \
 --peakfile1 $peakfile1 \
@@ -746,7 +744,7 @@ bash {params.scriptsdir}/ccbr_genrich_peak_calling.bash \
 --genome {params.genome} \
 --pooledpeakfile {params.grp}.genrich.narrowPeak \
 --consensusbedfile {params.grp}.genrich.consensus.bed \
---scriptsfolder {params.scriptsdir}
+--scriptsfolder {params.scriptsdir}"
 
 ls -alrth
 
@@ -788,9 +786,9 @@ qsortedbam3=$(echo {input.qsortedbam3}|awk -F"/" "{{print \$NF}}")
 peakfile3="${{rep3name}}.genrich.narrowPeak"
 
 PYTHONNOUSERSITE=1 singularity exec --cleanenv \
--B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+-B {params.workdir}/:/data2/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
 {params.singularity_sif} \
-bash {params.scriptsdir}/ccbr_genrich_peak_calling.bash \
+bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_genrich_peak_calling.bash \
 --bamrep1 $qsortedbam1 \
 --bamrep2 $qsortedbam2 \
 --bamrep3 $qsortedbam3 \
@@ -800,7 +798,7 @@ bash {params.scriptsdir}/ccbr_genrich_peak_calling.bash \
 --genome {params.genome} \
 --pooledpeakfile {params.grp}.genrich.narrowPeak \
 --consensusbedfile {params.grp}.genrich.consensus.bed \
---scriptsfolder {params.scriptsdir}
+--scriptsfolder {params.scriptsdir}"
 
 ls -alrth
 
@@ -884,8 +882,8 @@ cd /lscratch/$SLURM_JOBID
 
 for f in $(ls *narrowPeak);do
         PYTHONNOUSERSITE=1 singularity exec --cleanenv \
-        -B {params.workdir}/:/data2/,{params.index_dir}/:/index \
-        {params.singularity_sif} bedSort $f $f
+        -B {params.workdir}/:/data2/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
+        {params.singularity_sif} bash -c "cd /lscratch/$SLURM_JOBID/ && bedSort $f $f"
 done
 
 
@@ -919,13 +917,13 @@ done > allmethods.sample_group.peakfiles
 for m in "macs2" "genrich" "allmethods";do
     for f in "group" "sample" "sample_group";do
         PYTHONNOUSERSITE=1 singularity exec --cleanenv \
-        -B {params.workdir}/:/data2/,{params.index_dir}/:/index \
+        -B {params.workdir}/:/data2/,{params.index_dir}/:/index,/lscratch/$SLURM_JOBID/:/lscratch/$SLURM_JOBID/ \
         {params.singularity_sif} \
-        bash {params.scriptsdir}/ccbr_jaccard_pca.bash \
+        bash -c "cd /lscratch/$SLURM_JOBID/ && {params.scriptsdir}/ccbr_jaccard_pca.bash \
         --inputfilelist ${{m}}.${{f}}.peakfiles \
         --pairwise ${{m}}.${{f}}.jaccard.pairwise.txt \
         --pcahtml ${{m}}.${{f}}.jaccard.pca.html \
-        --scriptsfolder {params.scriptsdir}
+        --scriptsfolder {params.scriptsdir}"
         rsync -az --progress ${{m}}.${{f}}.jaccard.pairwise.txt {params.qcdir}/jaccard/
         rsync -az --progress ${{m}}.${{f}}.jaccard.pca.html {params.qcdir}/jaccard/
     done
